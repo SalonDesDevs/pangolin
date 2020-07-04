@@ -16,6 +16,6 @@ logging.root.handlers.clear()
 logging.root.addHandler(stdout)
 logging.root.setLevel(verbosity)
 
-from pangolin.game import Game
+from game import Game
 game = Game()
 game.start()
