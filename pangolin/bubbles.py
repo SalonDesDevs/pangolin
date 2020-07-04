@@ -3,13 +3,17 @@ class Bubble:
         self.spawn()
 
     def spawn(self):
-        pass
+        self.size = 16
 
     def move(self, delay):
         pass
 
 
 class Player(Bubble):
+
+    def __init__(self):
+        super().__init__()
+
     def deviate_up(self, delay):
         self.deviate(0, delay)
 
