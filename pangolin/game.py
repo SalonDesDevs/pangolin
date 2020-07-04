@@ -1,9 +1,13 @@
 import pygame
-
+import sys
+from pygame.locals import *
 
 class Game:
     def update(self, delay):
-        pass
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit() 
 
     def draw(self, screen):
         pass
@@ -20,5 +24,5 @@ class Game:
             self.draw(screen)
             delay = fpsClock.tick(fps)
 
-    def start():
+    def start(self):
         self.start_pygame()
