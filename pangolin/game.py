@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, fps):
         self.COLORS = [
             (227, 102, 93),
             (111, 227, 93),
@@ -23,6 +23,7 @@ class Game:
         self.entities = []
         self.explosions = []
         self.power_info = 0
+        self.fps = fps
 
     # logic
     def spawn_bubble(self, x, y, vel, size, color=None):
@@ -46,7 +47,7 @@ class Game:
             entities.Drawable(),
             entities.Moving(vel),
             entities.Colorful(color),
-            entities.Movable(acc, 10),
+            entities.Movable(acc, 1),
         )
         self.entities.append(player)
         return player
@@ -59,12 +60,14 @@ class Game:
 
         # move entities
         for entity in self.entities:
+            logger.debug("before %s %s %s", entity.pos, entity.vel, entity.acc)
             if entity.has_prop(entities.Movable):
-                entity.acc = entity.acc.transform(-entity.friction * entity.vel)
+                entity.acc = entity.acc.add(entity.vel.mul(-entity.friction / entity.mass))
         
             if entity.has_prop(entities.Moving):
                 entity.vel = entity.vel.transform(entity.acc)
                 entity.pos = entity.pos.transform(entity.vel)
+            logger.debug("after %s %s %s", entity.pos, entity.vel, entity.acc)
 
     # display
     def draw_entities(self, screen, ents):
@@ -94,7 +97,6 @@ class Game:
 
     def start_pygame(self):
         pygame.init()
-        fps = 60.0
         fps_clock = pygame.time.Clock()
         info_object = pygame.display.Info()
         screen_width = info_object.current_w
@@ -112,11 +114,11 @@ class Game:
             color=(255, 255, 255),
         )
 
-        delay = 1 / fps  # delay is the time since last frame.
+        delay = 1 / self.fps  # delay is the time since last frame.
         while True:
             self.update(delay)
             self.draw(screen)
-            delay = fps_clock.tick(fps)
+            delay = fps_clock.tick(self.fps)
 
     def start(self):
         self.start_pygame()

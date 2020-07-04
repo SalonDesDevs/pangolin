@@ -7,14 +7,14 @@ logger = logging.getLogger(__name__)
 SPEED = 1
 
 REST = Vector(0, 0)
-UP = SPEED * Vector.from_xy(0, 1)
-RIGHT = SPEED * Vector.from_xy(1, 0)
-UP_RIGHT = SPEED * Vector.from_xy(1, 1)
-UP_LEFT = SPEED * Vector.from_xy(-1, 1)
-DOWN = -1 * UP
-LEFT = -1 * RIGHT
-DOWN_LEFT = -1 * UP_RIGHT
-DOWN_RIGHT = -1 * UP_LEFT
+UP = Vector.from_xy(0, 1).mul(SPEED)
+RIGHT = Vector.from_xy(1, 0).mul(SPEED)
+UP_RIGHT = Vector.from_xy(1, 1).mul(SPEED)
+UP_LEFT = Vector.from_xy(-1, 1).mul(SPEED)
+DOWN = UP.mul(-1)
+LEFT = RIGHT.mul(-1)
+DOWN_LEFT = UP_RIGHT.mul(-1)
+DOWN_RIGHT = UP_LEFT.mul(-1)
 
 
 class Entity:
@@ -58,11 +58,11 @@ class Entity:
         return "entity with properties: " + ", ".join(prop.__name__ for prop in self.props)
 
 
-def property(func):
+def component(func):
     return func
 
 
-@property
+@component
 class Collidable:
     pos: Vector
     size: int
@@ -76,7 +76,7 @@ class Collidable:
         return self.size ** 2
 
 
-@property
+@component
 class Moving:
     vel: Vector
 
@@ -84,7 +84,7 @@ class Moving:
         self.vel = vel
 
 
-@property
+@component
 class Movable:
     acc: Vector
     friction: float
@@ -93,7 +93,7 @@ class Movable:
         self.acc = acc
         self.friction = friction
 
-@property
+@component
 class Colorful:
     color: tuple
 
@@ -101,6 +101,6 @@ class Colorful:
         self.color = color
 
 
-@property
+@component
 class Drawable:
     pass

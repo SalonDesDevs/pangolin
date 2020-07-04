@@ -1,5 +1,8 @@
 from math import *
 from typing import NamedTuple
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Vector(NamedTuple):
     norm: float
@@ -20,5 +23,8 @@ class Vector(NamedTuple):
     def from_xy(cls, x, y):
         return cls(sqrt(x ** 2 + y ** 2), atan2(y, x))
 
-    def __mul__(self, x):
-        return type(self).from_xy(self.x * x, self.y * x)
+    def mul(self, x):
+        return type(self)(self.norm * x, self.angle)
+
+    def add(self, other):
+        return type(self).from_xy(self.x + other.x, self.y + other.y)
