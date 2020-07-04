@@ -1,7 +1,10 @@
 import pygame
 import sys
+import logging
 from pygame.locals import *
 
+
+logger = logging.getLogger(__name__)
 
 class Game:
     def __init__(self):

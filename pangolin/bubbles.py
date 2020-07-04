@@ -1,30 +1,32 @@
+from geometry import Vector
+
+
 class Bubble:
-    def __init__(self):
-        self.spawn()
+    x: int
+    y: int
+    vel: Vector
+    acc: Vector
+    mass: int
 
-    def spawn(self):
-        self.size = 16
+    def __init__(self, x: int, y: int, vel: Vector, acc: Vector, mass: int):
+        self._x = x
+        self._y = y
+        self.vel = vel
+        self.acc = acc
+        self._mass = mass
 
-    def move(self, delay):
+    @property
+    def mass(self):
+        return self._mass
+
+    @property
+    def x(self):
+        return self._x
+
+    @property
+    def y(self):
+        return self._y
+
+    def move(self):
         pass
 
-
-class Player(Bubble):
-
-    def __init__(self):
-        super().__init__()
-
-    def deviate_up(self, delay):
-        self.deviate(0, delay)
-
-    def deviate_down(self, delay):
-        self.deviate(0, -delay)
-
-    def deviate_right(self, delay):
-        self.deviate(delay, 0)
-
-    def deviate_left(self, delay):
-        self.deviate(-delay, 0)
-
-    def deviate(self, x, y):
-        pass
