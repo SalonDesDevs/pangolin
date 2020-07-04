@@ -4,7 +4,6 @@ from pygame.locals import *
 
 
 class Game:
-
     def __init__(self):
         self.entities = []
         self.animations = []
@@ -16,6 +15,10 @@ class Game:
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
+        # move entities
+        for entity in entities:
+            entity.move(delay)
 
     # display
     def draw_entities(self, screen, entities):
