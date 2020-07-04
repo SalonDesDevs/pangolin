@@ -2,8 +2,8 @@ from math import *
 from typing import NamedTuple
 
 class Vector(NamedTuple):
-    angle: float
     norm: float
+    angle: float
 
     def transform(self, other: "Vector"):
         return self.from_xy(self.x + other.x, self.y + other.y)

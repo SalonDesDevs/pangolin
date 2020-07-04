@@ -42,17 +42,17 @@ class Entity:
         return prop_cls in self.props
 
     def __getattr__(self, attr):
-        for prop in self.props:
+        for prop in self.props.values():
             if hasattr(prop, attr):
-                return prop.attr
+                return getattr(prop, attr)
         raise AttributeError(
             f"AttributeError: '{type(self).__name__}' object has no attribute '{attr}'"
         )
 
     def __setattr__(self, attr, value):
-        for prop in self.props:
+        for prop in self.props.values():
             if hasattr(prop, attr):
-                prop.attr = value
+                setattr(prop, attr, value)
     
     def __str__(self):
         return "entity with properties: " + ", ".join(prop.__name__ for prop in self.props)
@@ -87,10 +87,11 @@ class Moving:
 @property
 class Movable:
     acc: Vector
+    friction: float
 
-    def __init__(self, acc: Vector):
+    def __init__(self, acc: Vector, friction: float = 0):
         self.acc = acc
-
+        self.friction = friction
 
 @property
 class Colorful:

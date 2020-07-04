@@ -59,19 +59,20 @@ class Game:
 
         # move entities
         for entity in self.entities:
-            pass
-            # entity.move(delay)
+            if entity.has_prop(entities.Movable):
+                pass
+            
 
     # display
     def draw_entities(self, screen, ents):
         for entity in ents:
             if not entity.has_prop(entities.Drawable):
                 continue
-            logger.error("ERRRO2R")
-            logger.debug("ERRROR")
-            logger.debug("drawing: %s", entity)
             pygame.draw.circle(
-                screen, entity.color, (entity.pos.x, entity.pos.y), entity.size
+                screen,
+                entity.color,
+                (round(entity.pos.x), round(entity.pos.y)),
+                entity.size*self.scale,
             )
 
     def draw_explosions(self, screen, explosions):
@@ -95,16 +96,16 @@ class Game:
         info_object = pygame.display.Info()
         screen_width = info_object.current_w
         screen_height = info_object.current_h
-        self.scale = screen_height // 64
+        self.scale = screen_height // 128
 
         screen = pygame.display.set_mode((screen_width, screen_height))
 
         self.spawn_player(
             x=screen_width // 2,
             y=screen_height // 2,
-            vel=entities.REST,
+            vel=entities.LEFT,
             acc=entities.REST,
-            size=8,
+            size=4,
             color=(255, 255, 255),
         )
 
