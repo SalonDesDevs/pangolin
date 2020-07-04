@@ -1,4 +1,4 @@
-import pygale
+import pygame
 
 
 class Game:
