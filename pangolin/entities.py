@@ -52,7 +52,7 @@ def property(func):
 
 
 @property
-class Odooable:
+class Collidable:
     pos: Vector
     size: int
 
