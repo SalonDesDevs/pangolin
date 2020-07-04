@@ -2,15 +2,31 @@ import pygame
 import sys
 from pygame.locals import *
 
+
 class Game:
+
+    # logic
     def update(self, delay):
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
-                sys.exit() 
+                sys.exit()
 
-    def draw(self, screen):
+    # display
+    def draw_bubbles(screen):
         pass
+
+    def draw_animations(screen):
+        pass
+
+    def draw_infos(screen):
+        pass
+
+    # "low level"
+    def draw(self, screen):
+        screen.fill((0, 0, 0))
+        self.draw_bubbles(screen)
+        pygame.display.flip()
 
     def start_pygame(self):
         pygame.init()
