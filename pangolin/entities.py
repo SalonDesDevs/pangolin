@@ -65,14 +65,14 @@ class Collidable:
         return self.size ** 2
     
 @property
-class Mouving:
+class Moving:
     vel: Vector
 
     def __init__(self, vel: Vector):
         self.vel = vel
 
 @property
-class Mouvable:
+class Movable:
     acc: Vector
 
     def __init__(self, acc: Vector):
@@ -88,3 +88,4 @@ class Colorful:
 @property
 class Drawable:
     pass
+
