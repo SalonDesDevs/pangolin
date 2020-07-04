@@ -6,7 +6,7 @@ from pygame.locals import *
 class Game:
     def __init__(self):
         self.entities = []
-        self.animations = []
+        self.explosions = []
         self.power_info = 0
 
     # logic
@@ -24,7 +24,7 @@ class Game:
     def draw_entities(self, screen, entities):
         pass
 
-    def draw_animations(self, screen, animations):
+    def draw_explosions(self, screen, explosions):
         pass
 
     def draw_infos(self, screen, power_info):
@@ -34,7 +34,7 @@ class Game:
     def draw(self, screen):
         screen.fill((0, 0, 0))
         self.draw_entities(screen, self.entities)
-        self.draw_animations(screen, self.animations)
+        self.draw_explosions(screen, self.explosions)
         self.draw_infos(screen, self.power_info)
         pygame.display.flip()
 
