@@ -24,7 +24,8 @@ class Vector(NamedTuple):
         return cls(sqrt(x ** 2 + y ** 2), atan2(y, x))
 
     def mul(self, x):
-        return type(self)(self.norm * x, self.angle)
+        offset = pi if x < 0 else 0
+        return type(self)(self.norm * abs(x), self.angle + offset)
 
     def add(self, other):
         return type(self).from_xy(self.x + other.x, self.y + other.y)

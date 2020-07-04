@@ -1,4 +1,5 @@
 from geometry import Vector
+import math
 import pygame
 import logging
 
@@ -8,13 +9,9 @@ SPEED = 1
 
 REST = Vector(0, 0)
 DOWN = Vector.from_xy(0, 1).mul(SPEED)
-RIGHT = Vector.from_xy(1, 0).mul(SPEED)
-DOWN_RIGHT = Vector.from_xy(1, 1).mul(SPEED)
-DOWN_LEFT = Vector.from_xy(-1, 1).mul(SPEED)
 UP = DOWN.mul(-1)
+RIGHT = Vector.from_xy(1, 0).mul(SPEED)
 LEFT = RIGHT.mul(-1)
-UP_LEFT = DOWN_RIGHT.mul(-1)
-UP_RIGHT = DOWN_LEFT.mul(-1)
 
 
 class Entity:

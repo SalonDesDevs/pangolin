@@ -123,7 +123,7 @@ class Game:
         self.player = self.spawn_player(
             x=screen_width // 2,
             y=screen_height // 2,
-            vel=entities.LEFT,
+            vel=entities.REST,
             acc=entities.REST,
             size=4,
             color=(255, 255, 255),
