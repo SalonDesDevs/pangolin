@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2020 Thomas Marchand
+Copyright (c) 2020 Thomas Marchand, Julien Castiaux, Antoine Tournepiche, Charlotte Thomas
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
