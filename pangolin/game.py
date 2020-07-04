@@ -15,14 +15,15 @@ class Game:
     def start_pygame(self):
         pygame.init()
         fps = 60.0
-        fpsClock = pygame.time.Clock()
-        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        fps_clock = pygame.time.Clock()
+        info_object = pygame.display.Info()
+        screen = pygame.display.set_mode((info_object.current_w, info_object.current_h))
 
         delay = 1 / fps  # delay is the time since last frame.
         while True:
             self.update(delay)
             self.draw(screen)
-            delay = fpsClock.tick(fps)
+            delay = fps_clock.tick(fps)
 
     def start(self):
         self.start_pygame()
