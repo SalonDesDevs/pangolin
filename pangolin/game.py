@@ -6,6 +6,7 @@ import entities
 import collections
 from geometry import Vector
 from pygame.locals import *
+from pygame import gfxdraw
 
 logger = logging.getLogger(__name__)
 
@@ -89,11 +90,12 @@ class Game:
         for entity in ents:
             if not entity.has_prop(entities.Drawable):
                 continue
-            pygame.draw.circle(
+            self.draw_circle(
                 screen,
-                entity.color,
-                (round(entity.pos.x), round(entity.pos.y)),
+                round(entity.pos.x),
+                round(entity.pos.y),
                 entity.size * self.scale,
+                entity.color,
             )
 
     def draw_explosions(self, screen, explosions):
@@ -109,6 +111,10 @@ class Game:
         self.draw_explosions(screen, self.explosions)
         self.draw_infos(screen, self.power_info)
         pygame.display.flip()
+
+    def draw_circle(self, surface, x, y, radius, color):
+        gfxdraw.aacircle(surface, x, y, radius, color)
+        gfxdraw.filled_circle(surface, x, y, radius, color)
 
     def start_pygame(self):
         pygame.init()
