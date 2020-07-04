@@ -16,66 +16,75 @@ DOWN_LEFT = -UP_RIGHT
 DOWN_RIGHT = -UP_LEFT
 
 
-class Bubble:
+class Entity:
+    props: dict
+
+    def __init__(self):
+        self.props = {}
+
+    def add_prop(self, prop):
+        if len(self.props) > 32:
+            logger.warning("TODO inject properties attributes inside")
+        assert type(prop) not in self.props
+        self.props[type(prop)] = prop
+
+    def rem_prop(self, prop_cls):
+        assert prop_cls in self.props
+        del self.props[prop_cls]
+
+    def has_prop(self, prop_cls):
+        return prop_cls in self.props
+
+    def __getattr__(self, attr):
+        for prop in self.properties:
+            if hasattr(prop, attr):
+                return prop.attr
+        raise AttributeError(f"AttributeError: '{type(self).__name__}' object has no attribute '{attr}'")
+
+    def __setattr__(self, attr, value):
+        for prop in self.properties:
+            if hasattr(prop, attr):
+                prop.attr = value
+
+
+def property(func):
+    return func
+
+
+@property
+class Odooable:
     pos: Vector
-    vel: Vector
-    acc: Vector
     size: int
 
-    def __init__(self, pos: Vector, vel: Vector, acc: Vector, mass: int):
+    def __init__(self, pos: Vector, size: int):
         self.pos = pos
-        self.vel = vel
-        self.acc = acc
-        self._size = size
-
-    @property
-    def size(self):
-        return self._size
+        self.size = size
 
     @property
     def mass(self):
         return self.size ** 2
+    
+@property
+class Mouving:
+    vel: Vector
 
-    @property
-    def x(self):
-        return self.pos.x
+    def __init__(self, vel: Vector):
+        self.vel = vel
 
-    @property
-    def y(self):
-        return self.pos.y
+@property
+class Mouvable:
+    acc: Vector
 
-    def move(self):
-        self.vel = self.vel.transform(self.acc)
-        self.pos = self.pos.transform(self.vel)
+    def __init__(self, acc: Vector):
+        self.acc = acc
 
-    def collide(self, other: Bubble):
-        pass
-
-
-class BubbleEntity(Bubble):
+@property
+class Colorful:
     color: tuple
 
-    def __init__(
-        self, x: int, y: int, vel: Vector, acc: Vector, size: int, color: tuple
-    ):
-        super().__init__(x, y, vel, acc, size)
-        self._color = color
+    def __init__(self, color: tuple):
+        self.color = color
 
-    @property
-    def color(self):
-        return self._color
-
-    def draw(self, screen, scale):
-        pygame.draw.circle(screen, self.color, (self.x, self.y), self.size * scale)
-
-
-class Player(Bubble):
-    K = 10
-
-    def move(self):
-        cls = type(self)
-        friction = -cls.K * Vector.from_xy(self.vel.x, self.vel.y)
-        self.acc = self.acc.transform(friction)
-        super().move()
-
-
+@property
+class Drawable:
+    pass
