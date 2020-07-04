@@ -1,3 +1,3 @@
-# Bubble of Persia
+# Pangolin
 
 For a gamejam
