@@ -13,7 +13,7 @@ class Game:
                 sys.exit()
 
     # display
-    def draw_bubbles(screen):
+    def draw_entities(screen):
         pass
 
     def draw_animations(screen):
@@ -25,7 +25,7 @@ class Game:
     # "low level"
     def draw(self, screen):
         screen.fill((0, 0, 0))
-        self.draw_bubbles(screen)
+        self.draw_entities(screen)
         pygame.display.flip()
 
     def start_pygame(self):
