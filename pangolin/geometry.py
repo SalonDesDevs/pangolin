@@ -6,7 +6,7 @@ class Vector(NamedTuple):
     angle: float
     norm: float
 
-    def transform(self, other: Vector):
+    def transform(self, other: "Vector"):
         sx = self.norm * cos(self.angle)
         sy = self.norm * sin(self.angle)
 
