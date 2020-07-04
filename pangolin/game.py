@@ -46,7 +46,7 @@ class Game:
             entities.Drawable(),
             entities.Moving(vel),
             entities.Colorful(color),
-            entities.Movable(vel),
+            entities.Movable(acc, 10),
         )
         self.entities.append(player)
         return player
@@ -60,8 +60,11 @@ class Game:
         # move entities
         for entity in self.entities:
             if entity.has_prop(entities.Movable):
-                pass
-            
+                entity.acc = entity.acc.transform(-entity.friction * entity.vel)
+        
+            if entity.has_prop(entities.Moving):
+                entity.vel = entity.vel.transform(entity.acc)
+                entity.pos = entity.pos.transform(entity.vel)
 
     # display
     def draw_entities(self, screen, ents):
@@ -72,7 +75,7 @@ class Game:
                 screen,
                 entity.color,
                 (round(entity.pos.x), round(entity.pos.y)),
-                entity.size*self.scale,
+                entity.size * self.scale,
             )
 
     def draw_explosions(self, screen, explosions):
