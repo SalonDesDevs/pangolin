@@ -17,7 +17,7 @@ class Game:
                 sys.exit()
 
         # move entities
-        for entity in entities:
+        for entity in self.entities:
             entity.move(delay)
 
     # display
