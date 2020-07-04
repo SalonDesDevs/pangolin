@@ -2,8 +2,10 @@ import pygame
 import sys
 import logging
 import random
+import entities
+import collections
+from geometry import Vector
 from pygame.locals import *
-from bubbles import BubbleEntity
 
 logger = logging.getLogger(__name__)
 
@@ -17,15 +19,37 @@ class Game:
             (160, 93, 227),
             (227, 93, 169),
         ]
+        self.bubbles_by_color = collections.defaultdict(list)
         self.entities = []
         self.explosions = []
         self.power_info = 0
 
     # logic
-    def spawn_bubble(self, x, y, vel, acc, size, color=None):
+    def spawn_bubble(self, x, y, vel, size, color=None):
         if not color:
             color = random.choice(self.COLORS)
-        self.entities.append(BubbleEntity(x, y, vel, acc, size, color))
+        bubble = entities.Entity(
+            entities.Collidable(Vector.from_xy(x, y), size),
+            entities.Drawable(),
+            entities.Moving(vel),
+            entities.Colorful(color),
+        )
+        self.bubbles_by_color[color].append(bubble)
+        self.entities.append(bubble)
+        return bubble
+
+    def spawn_player(self, x, y, vel, acc, size, color=None):
+        if not color:
+            color = random.choice(self.COLORS)
+        player = entities.Entity(
+            entities.Collidable(Vector.from_xy(x, y), size),
+            entities.Drawable(),
+            entities.Moving(vel),
+            entities.Colorful(color),
+            entities.Movable(vel),
+        )
+        self.entities.append(player)
+        return player
 
     def update(self, delay):
         for event in pygame.event.get():
@@ -35,12 +59,20 @@ class Game:
 
         # move entities
         for entity in self.entities:
-            entity.move(delay)
+            pass
+            # entity.move(delay)
 
     # display
-    def draw_entities(self, screen, entities):
-        for entity in entities:
-            entity.draw(screen, self.scale)
+    def draw_entities(self, screen, ents):
+        for entity in ents:
+            if not entity.has_prop(entities.Drawable):
+                continue
+            logger.error("ERRRO2R")
+            logger.debug("ERRROR")
+            logger.debug("drawing: %s", entity)
+            pygame.draw.circle(
+                screen, entity.color, (entity.pos.x, entity.pos.y), entity.size
+            )
 
     def draw_explosions(self, screen, explosions):
         pass
@@ -61,9 +93,20 @@ class Game:
         fps = 60.0
         fps_clock = pygame.time.Clock()
         info_object = pygame.display.Info()
+        screen_width = info_object.current_w
         screen_height = info_object.current_h
-        self.scale = screen_height / 64
-        screen = pygame.display.set_mode((info_object.current_w, screen_height))
+        self.scale = screen_height // 64
+
+        screen = pygame.display.set_mode((screen_width, screen_height))
+
+        self.spawn_player(
+            x=screen_width // 2,
+            y=screen_height // 2,
+            vel=entities.REST,
+            acc=entities.REST,
+            size=8,
+            color=(255, 255, 255),
+        )
 
         delay = 1 / fps  # delay is the time since last frame.
         while True:
