@@ -58,16 +58,31 @@ class Game:
                 pygame.quit()
                 sys.exit()
 
-        # move entities
+        self.handle_keystrokes()
+        self.move_entities()
+
+    def handle_keystrokes(self):
+        key_pressed = pygame.key.get_pressed()
+        v = entities.REST
+
+        if key_pressed[pygame.K_LEFT]:
+            v = v.add(entities.LEFT)
+        if key_pressed[pygame.K_RIGHT]:
+            v = v.add(entities.RIGHT)
+        if key_pressed[pygame.K_UP]:
+            v = v.add(entities.UP)
+        if key_pressed[pygame.K_DOWN]:
+            v = v.add(entities.DOWN)
+
+        self.player.acc = Vector(1 if v.norm > 0.5 else 0, v.angle).add(
+            self.player.vel.mul(-self.player.friction / self.player.mass)
+        )
+
+    def move_entities(self):
         for entity in self.entities:
-            logger.debug("before %s %s %s", entity.pos, entity.vel, entity.acc)
-            if entity.has_prop(entities.Movable):
-                entity.acc = entity.acc.add(entity.vel.mul(-entity.friction / entity.mass))
-        
             if entity.has_prop(entities.Moving):
                 entity.vel = entity.vel.transform(entity.acc)
                 entity.pos = entity.pos.transform(entity.vel)
-            logger.debug("after %s %s %s", entity.pos, entity.vel, entity.acc)
 
     # display
     def draw_entities(self, screen, ents):
@@ -105,7 +120,7 @@ class Game:
 
         screen = pygame.display.set_mode((screen_width, screen_height))
 
-        self.spawn_player(
+        self.player = self.spawn_player(
             x=screen_width // 2,
             y=screen_height // 2,
             vel=entities.LEFT,

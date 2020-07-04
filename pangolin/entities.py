@@ -7,14 +7,14 @@ logger = logging.getLogger(__name__)
 SPEED = 1
 
 REST = Vector(0, 0)
-UP = Vector.from_xy(0, 1).mul(SPEED)
+DOWN = Vector.from_xy(0, 1).mul(SPEED)
 RIGHT = Vector.from_xy(1, 0).mul(SPEED)
-UP_RIGHT = Vector.from_xy(1, 1).mul(SPEED)
-UP_LEFT = Vector.from_xy(-1, 1).mul(SPEED)
-DOWN = UP.mul(-1)
+DOWN_RIGHT = Vector.from_xy(1, 1).mul(SPEED)
+DOWN_LEFT = Vector.from_xy(-1, 1).mul(SPEED)
+UP = DOWN.mul(-1)
 LEFT = RIGHT.mul(-1)
-DOWN_LEFT = UP_RIGHT.mul(-1)
-DOWN_RIGHT = UP_LEFT.mul(-1)
+UP_LEFT = DOWN_RIGHT.mul(-1)
+UP_RIGHT = DOWN_LEFT.mul(-1)
 
 
 class Entity:
