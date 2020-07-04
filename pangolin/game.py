@@ -13,13 +13,13 @@ class Game:
                 sys.exit()
 
     # display
-    def draw_entities(screen):
+    def draw_entities(self, screen):
         pass
 
-    def draw_animations(screen):
+    def draw_animations(self, screen):
         pass
 
-    def draw_infos(screen):
+    def draw_infos(self, screen):
         pass
 
     # "low level"
