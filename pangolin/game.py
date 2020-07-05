@@ -67,13 +67,13 @@ class Game:
         key_pressed = pygame.key.get_pressed()
         v = vector.ZERO
 
-        if key_pressed[pygame.K_LEFT]:
+        if key_pressed[pygame.K_q]:
             v = v.add(vector.LEFT)
-        if key_pressed[pygame.K_RIGHT]:
+        if key_pressed[pygame.K_d]:
             v = v.add(vector.RIGHT)
-        if key_pressed[pygame.K_UP]:
+        if key_pressed[pygame.K_z]:
             v = v.add(vector.UP)
-        if key_pressed[pygame.K_DOWN]:
+        if key_pressed[pygame.K_s]:
             v = v.add(vector.DOWN)
 
         # Player movement logic
