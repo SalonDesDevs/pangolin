@@ -92,7 +92,7 @@ class Game:
                 x=self.player.pos.x,
                 y=self.player.pos.y,
                 vel=Vector(
-                    1,
+                    10,
                     Vector.from_xy(
                         mouse_x - self.player.pos.x, mouse_y - self.player.pos.y
                     ).angle,
