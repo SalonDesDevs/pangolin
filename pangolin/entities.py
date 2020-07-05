@@ -9,10 +9,8 @@ logger = logging.getLogger(__name__)
 
 
 class Entity:
-    comps = {}
-
     def __init__(self, *comps):
-        self.comps = {}
+        super().__setattr__("comps", {})
         self.add_comps(*comps)
 
     def add_comp(self, comp):
