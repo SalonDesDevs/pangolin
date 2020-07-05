@@ -102,7 +102,7 @@ class Game:
 
 class GameStateManager:
     def __init__(self):
-        self.states = [0, 1, 2]
+        self.states = [0, 1]
         self.previous_state = self.states[0]
 
     def start(self):
@@ -117,4 +117,8 @@ class GameStateManager:
             return
 
         self.previous_state = self.state
-        # todo: update entities components
+        if self.state == 1:
+            # todo: add components to bubble entities so they can kill players
+        elif self.state == 0:
+            # todo: remove components to bubble so they can't kill players
+        
