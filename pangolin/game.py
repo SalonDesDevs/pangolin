@@ -109,19 +109,14 @@ class Game:
             )
 
     def move_entities(self):
-        for entity in self.entities:
+        collide_funcs = []
+        def collision(func):
+            collide_funcs.append(func)
+            return func
 
-            if not entity.has_comp(components.Moving):
-                continue
-
-            vel = (
-                entity.vel.transform(entity.acc)
-                if entity.has_comp(components.Movable)
-                else entity.vel
-            )
-            pos = entity.pos.transform(vel)
-
-            # Multi-wall bouncing algorithm
+        @collision
+        def bounce():
+            """Multi-wall bouncing algorithm"""
             #
             #    wall
             #     |
@@ -133,37 +128,59 @@ class Game:
             #    /|
             #   O |
             #
+            nonlocal pos, vel
+
+            # bounce the entity a bit futher the wall so we ensure
+            # we don't bounce back back in the same wall and get stuck
+            bounce = entity.vel.norm# + vector.SPEED
+
+            if pos.x > WALL_RIGHT:
+                vel = Vector(bounce, math.pi - entity.vel.angle)
+                pos = Vector.from_xy(2 * WALL_RIGHT - pos.x, pos.y).transform(vel)
+
+            elif pos.x < WALL_LEFT:
+                vel = Vector(bounce, math.pi - entity.vel.angle)
+                pos = Vector.from_xy(2 * WALL_LEFT - pos.x, pos.y).transform(vel)
+
+            elif pos.y > WALL_BOTTOM:
+                vel = Vector(bounce, -entity.vel.angle)
+                pos = Vector.from_xy(pos.x, 2 * WALL_BOTTOM - pos.y).transform(vel)
+
+            elif pos.y < WALL_TOP:
+                vel = Vector(bounce, -entity.vel.angle)
+                pos = Vector.from_xy(pos.x, 2 * WALL_TOP - pos.y).transform(vel)
+
+            else:
+                return False  # didn't bounced
+            return True  # bounced
+
+        @collision
+        def collide():
+            """Multi-entity bouncing / hitting algorithm"""
+            return False
+
+
+        for entity in self.entities:
+
+            if not entity.has_comp(components.Moving):
+                continue
+
+            vel = (entity.vel.transform(entity.acc)
+                   if entity.has_comp(components.Movable)
+                   else entity.vel)
+            pos = entity.pos.transform(vel)
+
             WALL_RIGHT = self.screen_width - self.get_entity_radius(entity.size)
             WALL_LEFT = self.get_entity_radius(entity.size)
             WALL_BOTTOM = self.screen_height - self.get_entity_radius(entity.size)
             WALL_TOP = self.get_entity_radius(entity.size)
 
-            # bounce the entity a bit futher the wall so we ensure
-            # we don't bounce back back in the same wall and get stuck
-            bounce = entity.vel.norm + vector.SPEED
-
             for i in range(16):  # watchdog
-                if pos.x > WALL_RIGHT:
-                    vel = Vector(bounce, math.pi - entity.vel.angle)
-                    pos = Vector.from_xy(2 * WALL_RIGHT - pos.x, pos.y).transform(vel)
-
-                elif pos.x < WALL_LEFT:
-                    vel = Vector(bounce, math.pi - entity.vel.angle)
-                    pos = Vector.from_xy(2 * WALL_LEFT - pos.x, pos.y).transform(vel)
-
-                elif pos.y > WALL_BOTTOM:
-                    vel = Vector(bounce, -entity.vel.angle)
-                    pos = Vector.from_xy(pos.x, 2 * WALL_BOTTOM - pos.y).transform(vel)
-
-                elif pos.y < WALL_TOP:
-                    vel = Vector(bounce, -entity.vel.angle)
-                    pos = Vector.from_xy(pos.x, 2 * WALL_TOP - pos.y).transform(vel)
-
-                else:
-                    # base case, the entity didn't cross a wall
+                if not any(collide_func() for collide_func in collide_funcs):
                     break
             else:
-                raise RuntimeError("Bounced on too many walls")
+                logger.warning("{entity} bounced on too many walls")
+                self.kill(entity)
 
             entity.vel = vel
             entity.pos = pos
@@ -201,6 +218,9 @@ class Game:
     def draw_circle(self, surface, x, y, radius, color):
         gfxdraw.aacircle(surface, x, y, radius, color)
         gfxdraw.filled_circle(surface, x, y, radius, color)
+
+    def kill(self, entity):
+        self.entities.remove(entity)
 
     def spawn_bubble(self, entities, x, y, vel, size, color=None):
         bubble = entities.create_bubble(x, y, vel, size, color)
