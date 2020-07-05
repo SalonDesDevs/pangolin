@@ -34,9 +34,9 @@ class Game:
         self.screen_height = info_object.current_h
         self.scale = self.screen_height // 128
 
-        screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
 
-        self.player = entities.spawn_player(
+        self.player = self.spawn_player(
             x=self.screen_width // 2,
             y=self.screen_height // 2,
             vel=vector.ZERO,
@@ -44,12 +44,11 @@ class Game:
             size=4,
             color=(255, 255, 255),
         )
-        self.entities.append(self.player)
 
         delay = 1 / self.fps  # delay is the time since last frame.
         while True:
             self.update(delay)
-            self.draw(screen)
+            self.draw()
             delay = fps_clock.tick(self.fps)
 
     def start(self):
@@ -89,7 +88,7 @@ class Game:
         ):
             self.last_projectile_time = time.time()
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            projectile = entities.spawn_projectile(
+            projectile = self.spawn_projectile(
                 x=self.player.pos.x,
                 y=self.player.pos.y,
                 vel=Vector(
@@ -101,10 +100,10 @@ class Game:
                 size=0.5,
                 color=(200, 50, 50),
             )
-            self.entities.append(projectile)
 
     def move_entities(self):
         for entity in self.entities:
+
             if not entity.has_comp(components.Moving):
                 continue
 
@@ -159,33 +158,49 @@ class Game:
             entity.pos = pos
 
     # display
-    def draw_entities(self, screen, ents):
+    def draw_entities(self, ents):
         for entity in ents:
             if not entity.has_comp(components.Drawable):
                 continue
             self.draw_circle(
-                screen,
+                self.screen,
                 round(entity.pos.x),
                 round(entity.pos.y),
                 entity.size * self.scale,
                 entity.color,
             )
 
-    def draw_explosions(self, screen, explosions):
+    def draw_explosions(self, explosions):
         pass
 
-    def draw_infos(self, screen, power_info):
+    def draw_infos(self, power_info):
         pass
 
     # "low level"
-    def draw(self, screen):
-        screen.fill((0, 0, 0))
-        self.draw_entities(screen, self.entities)
-        self.draw_explosions(screen, self.explosions)
-        self.draw_infos(screen, self.power_info)
+    def draw(self):
+        self.screen.fill((0, 0, 0))
+        self.draw_entities(self.entities)
+        self.draw_explosions(self.explosions)
+        self.draw_infos(self.power_info)
         pygame.display.flip()
 
     def draw_circle(self, surface, x, y, radius, color):
         gfxdraw.aacircle(surface, x, y, radius, color)
         gfxdraw.filled_circle(surface, x, y, radius, color)
 
+
+    def spawn_bubble(self, entities, x, y, vel, size, color=None):
+        bubble = entities.create_bubble(x, y, vel, size, color)
+        self.entities.append(bubble)
+        return bubble
+
+    def spawn_player(self, x, y, vel, acc, size, color=None):
+        player = entities.create_player(x, y, vel, acc, size, color)
+        self.entities.append(player)
+        return player
+
+    def spawn_projectile(self, x, y, vel, size, color=None):
+        projectile = entities.create_projectile(x, y, vel, size, color)
+        print(projectile)
+        self.entities.append(projectile)
+        return projectile

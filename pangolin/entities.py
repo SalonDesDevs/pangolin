@@ -46,42 +46,40 @@ class Entity:
         return f"<{type(self).__name__} ({comps})>"
 
 
-def spawn_bubble(x, y, vel, size, color=None):
+def create_bubble(x, y, vel, size, color):
     if not color:
         color = random.choice(colors.all_colors)
 
-    bubble = Entity(
+    return Entity(
         components.Collidable(Vector.from_xy(x, y), size),
         components.Drawable(),
         components.Moving(vel),
         components.Colorful(color),
     )
-    return bubble
 
 
-def spawn_player(x, y, vel, acc, size, color=None):
+def create_player(x, y, vel, acc, size, color):
     FRICTION = 1
     if not color:
         color = random.choice(colors.all_colors)
 
-    player = Entity(
+    return Entity(
         components.Collidable(Vector.from_xy(x, y), size),
         components.Drawable(),
         components.Moving(vel),
         components.Colorful(color),
         components.Movable(acc, FRICTION),
     )
-    return player
 
 
-def spawn_projectile(x, y, vel, size, color=None):
+def create_projectile(x, y, vel, size, color):
     if not color:
         color = random.choice(colors.all_colors)
 
-    projectile = Entity(
+    return Entity(
         components.Collidable(Vector.from_xy(x, y), size),
         components.Drawable(),
         components.Moving(vel),
         components.Colorful(color),
     )
-    return projectile
+
