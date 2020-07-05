@@ -107,7 +107,9 @@ class Game:
             if not entity.has_comp(components.Moving):
                 continue
 
-            vel = entity.vel.transform(entity.acc)
+            vel = (entity.vel.transform(entity.acc)
+                   if entity.has_comp(components.Movable)
+                   else entity.vel)
             pos = entity.pos.transform(vel)
 
             # Multi-wall bouncing algorithm
