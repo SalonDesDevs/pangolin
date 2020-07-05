@@ -4,6 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Vector(NamedTuple):
     norm: float
     angle: float
@@ -29,3 +30,18 @@ class Vector(NamedTuple):
 
     def add(self, other):
         return type(self).from_xy(self.x + other.x, self.y + other.y)
+
+    def __str__(self):
+        return (f"{type(self).__name__}("
+                f"norm={self.norm:.2f}, "
+                f"angle={self.angle:.5f}, "
+                f"x={self.x:.2f}, "
+                f"y={self.y:.2f})")
+
+
+SPEED = 1
+ZERO = Vector(0, 0)
+DOWN = Vector.from_xy(0, 1).mul(SPEED)
+RIGHT = Vector.from_xy(1, 0).mul(SPEED)
+UP = DOWN.mul(-1)
+LEFT = RIGHT.mul(-1)
