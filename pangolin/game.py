@@ -4,6 +4,7 @@ import pygame
 import vector
 import entities
 import components
+import time
 from vector import Vector
 
 from pygame import gfxdraw
@@ -38,7 +39,10 @@ class Game:
 
         delay = 1 / self.fps  # delay is the time since last frame.
         self.engine = Engine(self)
+        self.game_states_manager = GameStateManager()
+        self.game_states_manager.start()
         while True:
+            self.game_states_manager.handle_state_update()
             self.engine.update(delay)
             self.draw()
             delay = fps_clock.tick(self.fps)
@@ -98,4 +102,19 @@ class Game:
 
 class GameStateManager:
     def __init__(self):
-        pass
+        self.states = [0, 1, 2]
+        self.previous_state = self.states[0]
+
+    def start(self):
+        self.start = time.time()
+
+    @property
+    def state(self):
+        return self.states[(int(time.time() - self.start) // 10) % len(self.states)]
+
+    def handle_state_update(self):
+        if self.previous_state == self.state:
+            return
+
+        self.previous_state = self.state
+        # todo: update entities components
