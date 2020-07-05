@@ -16,7 +16,7 @@ class Entity:
     def add_comp(self, comp):
         if len(self.comps) > 32:
             logger.warning("TODO inject component attributes inside")
-        assert type(comp) not in self.comps
+        assert type(comp) not in self.comps, f"{comp} already in {self}"
         self.comps[type(comp)] = comp
 
     def add_comps(self, *comps):
@@ -34,15 +34,13 @@ class Entity:
         for comp in self.comps.values():
             if hasattr(comp, attr):
                 return getattr(comp, attr)
-        raise AttributeError(
-            f"AttributeError: {self} has no attribute '{attr}'"
-        )
+        raise AttributeError(f"AttributeError: {self} has no attribute '{attr}'")
 
     def __setattr__(self, attr, value):
         for comp in self.comps.values():
             if hasattr(comp, attr):
                 setattr(comp, attr, value)
-    
+
     def __str__(self):
         comps = ", ".join(comp.__name__ for comp in self.comps)
         return f"<{type(self).__name__} ({comps})>"
@@ -74,3 +72,16 @@ def spawn_player(x, y, vel, acc, size, color=None):
         components.Movable(acc, FRICTION),
     )
     return player
+
+
+def spawn_projectile(x, y, vel, size, color=None):
+    if not color:
+        color = random.choice(colors.all_colors)
+
+    projectile = Entity(
+        components.Collidable(Vector.from_xy(x, y), size),
+        components.Drawable(),
+        components.Moving(vel),
+        components.Colorful(color),
+    )
+    return projectile

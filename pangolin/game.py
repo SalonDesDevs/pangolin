@@ -3,6 +3,7 @@ import logging
 import math
 import random
 import sys
+import time
 
 import pygame
 from pygame.locals import *
@@ -23,6 +24,7 @@ class Game:
         self.explosions = []
         self.power_info = 0
         self.fps = fps
+        self.last_projectile_time = 0
 
     def start_pygame(self):
         pygame.init()
@@ -80,6 +82,25 @@ class Game:
         self.player.acc = Vector(1 if v.norm > 0.5 else 0, v.angle).add(
             self.player.vel.mul(-self.player.friction / self.player.mass)
         )
+
+        if (
+            pygame.mouse.get_pressed()[0]
+            and time.time() - self.last_projectile_time > 1
+        ):
+            self.last_projectile_time = time.time()
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            entities.spawn_projectile(
+                x=self.player.pos.x,
+                y=self.player.pos.y,
+                vel=Vector(
+                    1,
+                    Vector.from_xy(
+                        mouse_x - self.player.pos.x, mouse_y - self.player.pos.y
+                    ).angle,
+                ),
+                size=0.5,
+                color=(200, 50, 50),
+            )
 
     def move_entities(self):
         for entity in self.entities:
