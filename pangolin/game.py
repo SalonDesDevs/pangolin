@@ -118,7 +118,9 @@ class GameStateManager:
 
         self.previous_state = self.state
         if self.state == 1:
+            pass
             # todo: add components to bubble entities so they can kill players
         elif self.state == 0:
+            pass
             # todo: remove components to bubble so they can't kill players
         
