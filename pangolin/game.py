@@ -89,7 +89,7 @@ class Game:
         ):
             self.last_projectile_time = time.time()
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            entities.spawn_projectile(
+            projectile = entities.spawn_projectile(
                 x=self.player.pos.x,
                 y=self.player.pos.y,
                 vel=Vector(
@@ -101,6 +101,7 @@ class Game:
                 size=0.5,
                 color=(200, 50, 50),
             )
+            self.entities.append(projectile)
 
     def move_entities(self):
         for entity in self.entities:
