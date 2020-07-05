@@ -1,6 +1,6 @@
 import abc
 from collections import defaultdict
-from vector import Vector 
+from vector import Vector
 
 
 class Component(metaclass=abc.ABCMeta):
@@ -56,4 +56,4 @@ class Identifiable(Component):
     def __init__(self, name: str):
         self.name = name
         self.ident = type(self).counts[name]
-        type(self).counts[name] = type(self).counts[name] + 1 & 0xffff
+        type(self).counts[name] = type(self).counts[name] + 1 & 0xFFFF
