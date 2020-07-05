@@ -168,7 +168,7 @@ class Game:
                 self.screen,
                 round(entity.pos.x),
                 round(entity.pos.y),
-                entity.size * self.scale,
+                round(entity.size * self.scale),
                 entity.color,
             )
 
