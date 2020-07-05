@@ -2,6 +2,7 @@ import pygame
 import sys
 import logging
 import random
+import math
 import entities
 import collections
 from geometry import Vector
@@ -81,9 +82,58 @@ class Game:
 
     def move_entities(self):
         for entity in self.entities:
-            if entity.has_prop(entities.Moving):
-                entity.vel = entity.vel.transform(entity.acc)
-                entity.pos = entity.pos.transform(entity.vel)
+            if not entity.has_prop(entities.Moving):
+                continue
+
+            vel = entity.vel.transform(entity.acc)
+            pos = entity.pos.transform(vel)
+
+            # Multi-wall bouncing algorithm
+            #
+            #    wall
+            #     |
+            # O------>0
+            #  \  |  /
+            #   \ | /
+            #    \|/
+            #     |
+            #    /|
+            #   O |
+            #
+            WALL_RIGHT = self.screen_width - entity.size
+            WALL_LEFT = entity.size
+            WALL_BOTTOM = self.screen_height - entity.size
+            WALL_TOP = entity.size
+
+            # bounce the entity a bit futher the wall so we ensure
+            # we don't bounce back back in the same wall and get stuck
+            bounce = entity.vel.norm + entities.SPEED
+
+            for i in range(16):  # watchdog
+                if pos.x > WALL_RIGHT:
+                    vel = Vector(bounce, math.pi - entity.vel.angle)
+                    pos = Vector.from_xy(2 * WALL_RIGHT - pos.x, pos.y).transform(vel)
+
+                elif pos.x < WALL_LEFT:
+                    vel = Vector(bounce, math.pi - entity.vel.angle)
+                    pos = Vector.from_xy(2 * WALL_LEFT - pos.x, pos.y).transform(vel)
+
+                elif pos.y > WALL_BOTTOM:
+                    vel = Vector(bounce, -entity.vel.angle)
+                    pos = Vector.from_xy(pos.x, 2 * WALL_BOTTOM - pos.y).transform(vel)
+
+                elif pos.y < WALL_TOP:
+                    vel = Vector(bounce, -entity.vel.angle)
+                    pos = Vector.from_xy(pos.x, 2 * WALL_TOP - pos.y).transform(vel)
+
+                else:
+                    # base case, the entity didn't cross a wall
+                    break
+            else:
+                raise RuntimeError("Bounced on too many walls")
+
+            entity.vel = vel
+            entity.pos = pos
 
     # display
     def draw_entities(self, screen, ents):
@@ -120,15 +170,15 @@ class Game:
         pygame.init()
         fps_clock = pygame.time.Clock()
         info_object = pygame.display.Info()
-        screen_width = info_object.current_w
-        screen_height = info_object.current_h
-        self.scale = screen_height // 128
+        self.screen_width = info_object.current_w
+        self.screen_height = info_object.current_h
+        self.scale = self.screen_height // 128
 
-        screen = pygame.display.set_mode((screen_width, screen_height))
+        screen = pygame.display.set_mode((self.screen_width, self.screen_height))
 
         self.player = self.spawn_player(
-            x=screen_width // 2,
-            y=screen_height // 2,
+            x=self.screen_width // 2,
+            y=self.screen_height // 2,
             vel=entities.REST,
             acc=entities.REST,
             size=4,
