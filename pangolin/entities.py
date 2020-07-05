@@ -42,8 +42,15 @@ class Entity:
                 setattr(comp, attr, value)
 
     def __str__(self):
+        cls = type(self).__name__
+        if self.has_comp(components.Identifiable):
+            return f"<{cls} {self.name} [{self.ident}]>"
+        else:
+            return repr(self)
+
+    def __repr__(self):
         comps = ", ".join(comp.__name__ for comp in self.comps)
-        return f"<{type(self).__name__} ({comps})>"
+        return f"<{cls} ({comps})>"
 
 
 def create_bubble(x, y, vel, size, color):
@@ -51,6 +58,7 @@ def create_bubble(x, y, vel, size, color):
         color = random.choice(colors.all_colors)
 
     return Entity(
+        components.Identifiable("Bubble"),
         components.Collidable(Vector.from_xy(x, y), size),
         components.Drawable(),
         components.Moving(vel),
@@ -64,6 +72,7 @@ def create_player(x, y, vel, acc, size, color):
         color = random.choice(colors.all_colors)
 
     return Entity(
+        components.Identifiable("Player"),
         components.Collidable(Vector.from_xy(x, y), size),
         components.Drawable(),
         components.Moving(vel),
@@ -77,6 +86,7 @@ def create_projectile(x, y, vel, size, color):
         color = random.choice(colors.all_colors)
 
     return Entity(
+        components.Identifiable("Projectile"),
         components.Collidable(Vector.from_xy(x, y), size),
         components.Drawable(),
         components.Moving(vel),

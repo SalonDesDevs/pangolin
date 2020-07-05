@@ -1,5 +1,6 @@
 import abc
-from vector import Vector
+from collections import defaultdict
+from vector import Vector 
 
 
 class Component(metaclass=abc.ABCMeta):
@@ -44,3 +45,15 @@ class Colorful(Component):
 
 class Drawable(Component):
     pass
+
+
+class Identifiable(Component):
+    name: str
+    ident: int
+
+    counts = defaultdict(int)
+
+    def __init__(self, name: str):
+        self.name = name
+        self.ident = type(self).counts[name]
+        type(self).counts[name] = type(self).counts[name] + 1 & 0xffff
