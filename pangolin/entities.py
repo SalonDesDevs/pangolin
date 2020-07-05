@@ -82,4 +82,3 @@ def create_projectile(x, y, vel, size, color):
         components.Moving(vel),
         components.Colorful(color),
     )
-

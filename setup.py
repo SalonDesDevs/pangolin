@@ -16,7 +16,6 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/SalonDesDevs/pangolin",
     packages=setuptools.find_packages(),
-
     # https://pypi.org/classifiers/
     classifiers=[
         "Development Status :: 3 - Alpha",

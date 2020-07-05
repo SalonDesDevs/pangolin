@@ -32,11 +32,13 @@ class Vector(NamedTuple):
         return type(self).from_xy(self.x + other.x, self.y + other.y)
 
     def __str__(self):
-        return (f"{type(self).__name__}("
-                f"norm={self.norm:.2f}, "
-                f"angle={self.angle:.5f}, "
-                f"x={self.x:.2f}, "
-                f"y={self.y:.2f})")
+        return (
+            f"{type(self).__name__}("
+            f"norm={self.norm:.2f}, "
+            f"angle={self.angle:.5f}, "
+            f"x={self.x:.2f}, "
+            f"y={self.y:.2f})"
+        )
 
 
 SPEED = 1
