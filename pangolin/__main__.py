@@ -22,7 +22,7 @@ logging.root.handlers.clear()
 logging.root.addHandler(stdout)
 logging.root.setLevel(verbosity)
 
-from game import Game
+from engine import Game
 
 game = Game(fps=options.fps)
 game.start()
