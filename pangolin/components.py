@@ -46,6 +46,8 @@ class Colorful(Component):
 class Drawable(Component):
     pass
 
+class Powered(Component): # todo: improve name?
+    pass
 
 class Identifiable(Component):
     name: str
