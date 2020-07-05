@@ -209,6 +209,5 @@ class Game:
 
     def spawn_projectile(self, x, y, vel, size, color=None):
         projectile = entities.create_projectile(x, y, vel, size, color)
-        print(projectile)
         self.entities.append(projectile)
         return projectile
