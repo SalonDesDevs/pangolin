@@ -1,58 +1,31 @@
-import collections
 import logging
 import math
 import random
 import sys
 import time
-
 import pygame
-from pygame.locals import *
-from pygame import gfxdraw
-
-import components
-import entities
 import vector
 from vector import Vector
+from pygame.locals import *
+
+import components
+
 
 logger = logging.getLogger(__name__)
 
 
-class Game:
-    def __init__(self, fps):
-        self.bubbles_by_color = collections.defaultdict(list)
-        self.entities = []
-        self.explosions = []
-        self.power_info = 0
-        self.fps = fps
+class Engine:
+    def __init__(self, game):
+        self.game = game
         self.last_projectile_time = 0
 
-    def start_pygame(self):
-        pygame.init()
-        fps_clock = pygame.time.Clock()
-        info_object = pygame.display.Info()
-        self.screen_width = info_object.current_w
-        self.screen_height = info_object.current_h
-        self.scale = self.screen_height // 128
+    @property
+    def player(self):
+        return self.game.player
 
-        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
-
-        self.player = self.spawn_player(
-            x=self.screen_width // 2,
-            y=self.screen_height // 2,
-            vel=vector.ZERO,
-            acc=vector.ZERO,
-            size=4,
-            color=(255, 255, 255),
-        )
-
-        delay = 1 / self.fps  # delay is the time since last frame.
-        while True:
-            self.update(delay)
-            self.draw()
-            delay = fps_clock.tick(self.fps)
-
-    def start(self):
-        self.start_pygame()
+    @property
+    def entities(self):
+        return self.game.entities
 
     # logic
     def update(self, delay):
@@ -100,7 +73,7 @@ class Game:
                 angle,
             )
 
-            projectile = self.spawn_projectile(
+            projectile = self.game.spawn_projectile(
                 x=self.player.pos.x + projectile_shift.x,
                 y=self.player.pos.y + projectile_shift.y,
                 vel=Vector(10, angle),
@@ -110,6 +83,7 @@ class Game:
 
     def move_entities(self):
         collide_funcs = []
+
         def collision(func):
             collide_funcs.append(func)
             return func
@@ -132,7 +106,7 @@ class Game:
 
             # bounce the entity a bit futher the wall so we ensure
             # we don't bounce back back in the same wall and get stuck
-            bounce = entity.vel.norm# + vector.SPEED
+            bounce = entity.vel.norm  # + vector.SPEED
 
             if pos.x > WALL_RIGHT:
                 vel = Vector(bounce, math.pi - entity.vel.angle)
@@ -159,20 +133,21 @@ class Game:
             """Multi-entity bouncing / hitting algorithm"""
             return False
 
-
         for entity in self.entities:
 
             if not entity.has_comp(components.Moving):
                 continue
 
-            vel = (entity.vel.transform(entity.acc)
-                   if entity.has_comp(components.Movable)
-                   else entity.vel)
+            vel = (
+                entity.vel.transform(entity.acc)
+                if entity.has_comp(components.Movable)
+                else entity.vel
+            )
             pos = entity.pos.transform(vel)
 
-            WALL_RIGHT = self.screen_width - self.get_entity_radius(entity.size)
+            WALL_RIGHT = self.game.screen_width - self.get_entity_radius(entity.size)
             WALL_LEFT = self.get_entity_radius(entity.size)
-            WALL_BOTTOM = self.screen_height - self.get_entity_radius(entity.size)
+            WALL_BOTTOM = self.game.screen_height - self.get_entity_radius(entity.size)
             WALL_TOP = self.get_entity_radius(entity.size)
 
             for i in range(16):  # watchdog
@@ -186,53 +161,4 @@ class Game:
             entity.pos = pos
 
     def get_entity_radius(self, size):
-        return round(size * self.scale)
-
-    # display
-    def draw_entities(self, ents):
-        for entity in ents:
-            if not entity.has_comp(components.Drawable):
-                continue
-            self.draw_circle(
-                self.screen,
-                round(entity.pos.x),
-                round(entity.pos.y),
-                self.get_entity_radius(entity.size),
-                entity.color,
-            )
-
-    def draw_explosions(self, explosions):
-        pass
-
-    def draw_infos(self, power_info):
-        pass
-
-    # "low level"
-    def draw(self):
-        self.screen.fill((0, 0, 0))
-        self.draw_entities(self.entities)
-        self.draw_explosions(self.explosions)
-        self.draw_infos(self.power_info)
-        pygame.display.flip()
-
-    def draw_circle(self, surface, x, y, radius, color):
-        gfxdraw.aacircle(surface, x, y, radius, color)
-        gfxdraw.filled_circle(surface, x, y, radius, color)
-
-    def kill(self, entity):
-        self.entities.remove(entity)
-
-    def spawn_bubble(self, entities, x, y, vel, size, color=None):
-        bubble = entities.create_bubble(x, y, vel, size, color)
-        self.entities.append(bubble)
-        return bubble
-
-    def spawn_player(self, x, y, vel, acc, size, color=None):
-        player = entities.create_player(x, y, vel, acc, size, color)
-        self.entities.append(player)
-        return player
-
-    def spawn_projectile(self, x, y, vel, size, color=None):
-        projectile = entities.create_projectile(x, y, vel, size, color)
-        self.entities.append(projectile)
-        return projectile
+        return round(size * self.game.scale)
