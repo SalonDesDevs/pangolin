@@ -88,18 +88,23 @@ class Game:
         ):
             self.last_projectile_time = time.time()
             mouse_x, mouse_y = pygame.mouse.get_pos()
-
+            projectile_size = 0.5
             angle = Vector.from_xy(
                 mouse_x - self.player.pos.x, mouse_y - self.player.pos.y
             ).angle
 
-            Vector(10, angle)
+            projectile_shift = Vector(
+                self.get_entity_radius(self.player.size)
+                + self.get_entity_radius(projectile_size)
+                + 1,
+                angle,
+            )
 
             projectile = self.spawn_projectile(
-                x=self.player.pos.x,
-                y=self.player.pos.y,
+                x=self.player.pos.x + projectile_shift.x,
+                y=self.player.pos.y + projectile_shift.y,
                 vel=Vector(10, angle),
-                size=0.5,
+                size=projectile_size,
                 color=(200, 50, 50),
             )
 
