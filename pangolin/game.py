@@ -88,15 +88,17 @@ class Game:
         ):
             self.last_projectile_time = time.time()
             mouse_x, mouse_y = pygame.mouse.get_pos()
+
+            angle = Vector.from_xy(
+                mouse_x - self.player.pos.x, mouse_y - self.player.pos.y
+            ).angle
+
+            Vector(10, angle)
+
             projectile = self.spawn_projectile(
                 x=self.player.pos.x,
                 y=self.player.pos.y,
-                vel=Vector(
-                    10,
-                    Vector.from_xy(
-                        mouse_x - self.player.pos.x, mouse_y - self.player.pos.y
-                    ).angle,
-                ),
+                vel=Vector(10, angle),
                 size=0.5,
                 color=(200, 50, 50),
             )
@@ -107,9 +109,11 @@ class Game:
             if not entity.has_comp(components.Moving):
                 continue
 
-            vel = (entity.vel.transform(entity.acc)
-                   if entity.has_comp(components.Movable)
-                   else entity.vel)
+            vel = (
+                entity.vel.transform(entity.acc)
+                if entity.has_comp(components.Movable)
+                else entity.vel
+            )
             pos = entity.pos.transform(vel)
 
             # Multi-wall bouncing algorithm
@@ -124,10 +128,10 @@ class Game:
             #    /|
             #   O |
             #
-            WALL_RIGHT = self.screen_width - entity.size
-            WALL_LEFT = entity.size
-            WALL_BOTTOM = self.screen_height - entity.size
-            WALL_TOP = entity.size
+            WALL_RIGHT = self.screen_width - self.get_entity_radius(entity.size)
+            WALL_LEFT = self.get_entity_radius(entity.size)
+            WALL_BOTTOM = self.screen_height - self.get_entity_radius(entity.size)
+            WALL_TOP = self.get_entity_radius(entity.size)
 
             # bounce the entity a bit futher the wall so we ensure
             # we don't bounce back back in the same wall and get stuck
@@ -159,6 +163,9 @@ class Game:
             entity.vel = vel
             entity.pos = pos
 
+    def get_entity_radius(self, size):
+        return round(size * self.scale)
+
     # display
     def draw_entities(self, ents):
         for entity in ents:
@@ -168,7 +175,7 @@ class Game:
                 self.screen,
                 round(entity.pos.x),
                 round(entity.pos.y),
-                round(entity.size * self.scale),
+                self.get_entity_radius(entity.size),
                 entity.color,
             )
 
@@ -189,7 +196,6 @@ class Game:
     def draw_circle(self, surface, x, y, radius, color):
         gfxdraw.aacircle(surface, x, y, radius, color)
         gfxdraw.filled_circle(surface, x, y, radius, color)
-
 
     def spawn_bubble(self, entities, x, y, vel, size, color=None):
         bubble = entities.create_bubble(x, y, vel, size, color)
