@@ -154,7 +154,7 @@ class Engine:
                 if not any(collide_func() for collide_func in collide_funcs):
                     break
             else:
-                logger.warning("{entity} bounced on too many walls")
+                logger.warning(f"{entity} bounced on too many walls")
                 self.kill(entity)
 
             entity.vel = vel
